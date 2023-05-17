@@ -1,7 +1,8 @@
 // Require the Express library and create an instance of the app
 const express = require("express");
 const app = express();
-const cors = require("cors")
+const cors = require("cors");
+
 // Require the weather data JSON file
 const weatherData = require("./Data/weather.json");
 
@@ -12,10 +13,12 @@ class Forecast {
     this.description = description;
   }
 }
-app.use(cors())
+
+app.use(cors()); // Enable CORS (Cross-Origin Resource Sharing)
+
 // Define a route at the endpoint '/'
 app.get("/", (req, res) => {
-  res.send("What it doo family");
+  res.send("What it doo family"); // Send a response with the message "What it doo family"
 });
 
 // Define a route at the endpoint '/weather'
@@ -23,12 +26,9 @@ app.get("/weather", (req, res) => {
   // Extract the latitude, longitude, and search query from the request's query parameters
   let lat = req.query.lat;
   let lon = req.query.lon;
-  // let searchQuery = req.query.searchQuery;
-  console.log(lat);
-  console.log(lon);
-  // console.log(searchQuery);
+
   // If any of the required parameters are missing, send an error message in the response
-   if (lat === undefined || lon === undefined) {
+  if (lat === undefined || lon === undefined) {
     res.send("NOOOOO");
   } else {
     // Search the weather data for a forecast that matches the given latitude, longitude, and search query
@@ -43,20 +43,23 @@ app.get("/weather", (req, res) => {
         return false;
       }
     });
+
     // If no matching forecast is found, send an error message in the response
     if (correctForecast === undefined) {
       res.send("error");
     } else {
       let newArray = [];
-        newArray = correctForecast.data.map((forecast) => {
-            return new Forecast(forecast.datetime, forecast.weather.description )
-        })
+      newArray = correctForecast.data.map((forecast) => {
+        return new Forecast(forecast.datetime, forecast.weather.description);
+      });
+
       // If a matching forecast is found, send it in the response
       res.send(newArray);
     }
   }
 });
-// error handling middleware must be the last app.use()
+
+// Error handling middleware, must be the last app.use()
 app.use((error, request, response, next) => {
   console.error(error);
   response.status(500).send(error.message);
