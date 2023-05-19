@@ -1,8 +1,11 @@
+// import axios from "axios";
 // Require the Express library and create an instance of the app
 const express = require("express");
 const app = express();
 const cors = require("cors");
-
+const axios = require("axios")
+const { config } = require('dotenv');
+config()
 // Require the weather data JSON file
 const weatherData = require("./Data/weather.json");
 
@@ -22,7 +25,7 @@ app.get("/", (req, res) => {
 });
 
 // Define a route at the endpoint '/weather'
-app.get("/weather", (req, res) => {
+app.get("/weather", async (req, res) => {
   // Extract the latitude, longitude, and search query from the request's query parameters
   let lat = req.query.lat;
   let lon = req.query.lon;
@@ -32,32 +35,40 @@ app.get("/weather", (req, res) => {
     res.send("NOOOOO");
   } else {
     // Search the weather data for a forecast that matches the given latitude, longitude, and search query
-    let correctForecast = weatherData.find((city) => {
-      if (
-        city.lat == lat &&
-        city.lon == lon
-        // city.city_name === searchQuery
-      ) {
-        return true;
-      } else {
-        return false;
-      }
-    });
+    let correctForecastFromAPI = await axios.get(`https://city-exploer-api-uvtl.onrender.com/?key=${process.env.WEATHER_API_KEY}&lat=${lat}&lon=${lon}`)
+    console.log(correctForecastFromAPI.data)
+    // console.log(correctForecastFromAPI.data)
+    // let correctForecast = weatherData.find((city) => {
+    //   if (
+    //     city.lat == lat &&
+    //     city.lon == lon
+    //     // city.city_name === searchQuery
+    //   ) {
+    //     return true;
+    //   } else {
+    //     return false;
+    //   }
+    // });
 
-    // If no matching forecast is found, send an error message in the response
-    if (correctForecast === undefined) {
-      res.send("error");
-    } else {
+    // // If no matching forecast is found, send an error message in the response
+    // if (correctForecast === undefined) {
+    //   res.send("error");
+    // } else {
       let newArray = [];
-      newArray = correctForecast.data.map((forecast) => {
+      newArray = correctForecastFromAPI.data.data.map((forecast) => {
         return new Forecast(forecast.datetime, forecast.weather.description);
       });
 
       // If a matching forecast is found, send it in the response
       res.send(newArray);
     }
-  }
+  // }
 });
+
+
+app.get("/movies", (req, res) => {
+
+})
 
 // Error handling middleware, must be the last app.use()
 app.use((error, request, response, next) => {
