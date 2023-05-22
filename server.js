@@ -21,7 +21,7 @@ app.use(cors()); // Enable CORS (Cross-Origin Resource Sharing)
 
 // Define a route at the endpoint '/'
 app.get("/", (req, res) => {
-  res.send("What it doo family"); // Send a response with the message "What it doo family"
+  res.send("Welcome to the Matrix :)"); // Send a response with the message "What it doo family"
 });
 
 // Define a route at the endpoint '/weather'
@@ -38,24 +38,8 @@ app.get("/weather", async (req, res) => {
     let correctForecastFromAPI = await axios.get(`https://api.weatherbit.io/v2.0/forecast/daily?key=${process.env.WEATHER_API_KEY}&lat=${lat}&lon=${lon}`)
     console.log(correctForecastFromAPI.data)
     // console.log(correctForecastFromAPI.data)
-    // let correctForecast = weatherData.find((city) => {
-    //   if (
-    //     city.lat == lat &&
-    //     city.lon == lon
-    //     // city.city_name === searchQuery
-    //   ) {
-    //     return true;
-    //   } else {
-    //     return false;
-    //   }
-    // });
-
-    // // If no matching forecast is found, send an error message in the response
-    // if (correctForecast === undefined) {
-    //   res.send("error");
-    // } else {
-      let newArray = [];
-      newArray = correctForecastFromAPI.data.data.map((forecast) => {
+    let newArray = [];
+    newArray = correctForecastFromAPI.data.data.map((forecast) => {
         return new Forecast(forecast.datetime, forecast.weather.description);
       });
 
@@ -67,18 +51,18 @@ app.get("/weather", async (req, res) => {
 
 class Movie{
   constructor(adult, backdrop_path, genre_ids, id, original_language, original_title, overview, popularity, poster_path, release_date, title, video, vote_average, vote_count){
-this.adult = adult    
-this.backdrop_path = backdrop_path
-this.genre_ids = genre_ids
-this.id = id
-this.original_language = original_language
-this.original_title = original_title
-this.overview = overview
-this.popularity = popularity
-this.poster_path = poster_path
-this.release_date = release_date
-this.title = title
-this.video = video
+    this.adult = adult    
+    this.backdrop_path = backdrop_path
+    this.genre_ids = genre_ids
+    this.id = id
+    this.original_language = original_language
+    this.original_title = original_title
+    this.overview = overview
+    this.popularity = popularity
+    this.poster_path = poster_path
+    this.release_date = release_date
+    this.title = title
+    this.video = video
 this.vote_average = vote_average
 this.vote_count = vote_count    
   }
@@ -87,7 +71,7 @@ this.vote_count = vote_count
 app.get("/movies", async (req, res) => {
   let movieSelected = await axios.get(`https://api.themoviedb.org/3/search/movie?api_key=${process.env.MOVIE_API_KEY}&query=${req.query.movie}`)
  if(movieSelected.data.results.length === 0){
-  res.status(400).send("Try again nigga")
+   res.status(400).send("Try again nigga")
  }else{
   res.send(movieSelected.data.results)
 }
@@ -104,3 +88,20 @@ app.use((error, request, response, next) => {
 app.listen(3000, () => {
   console.log("server listening on port 3000");
 });
+
+// let correctForecast = weatherData.find((city) => {
+//   if (
+//     city.lat == lat &&
+//     city.lon == lon
+//     // city.city_name === searchQuery
+//   ) {
+//     return true;
+//   } else {
+//     return false;
+//   }
+// });
+
+// // If no matching forecast is found, send an error message in the response
+// if (correctForecast === undefined) {
+//   res.send("error");
+// } else {
