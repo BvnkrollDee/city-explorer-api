@@ -1,4 +1,7 @@
 const axios = require('axios')
+const NodeCache = require( "node-cache" );
+const myCache = new NodeCache();
+
 
 class Movie{
     constructor(adult, backdrop_path, genre_ids, id, original_language, original_title, overview, popularity, poster_path, release_date, title, video, vote_average, vote_count){
@@ -19,13 +22,22 @@ class Movie{
     }}
 
 async function getMovie(movie){
-    let movieSelected = await axios.get(`https://api.themoviedb.org/3/search/movie?api_key=${process.env.MOVIE_API_KEY}&query=${movie}`)
-    if(movieSelected.data.results.length === 0){
-      return("Try again nigga")
-    }else{
-     return(movieSelected.data.results)
+  let value = myCache.get(movie);
+  if (value !== undefined){
+    return value}else{
+      let movieSelected = await axios.get(`https://api.themoviedb.org/3/search/movie?api_key=${process.env.MOVIE_API_KEY}&query=${movie}`)
+      if(movieSelected.data.results.length === 0){
+        return("Try again nigga")
+      }else{
+      let movieCache = myCache.set(movie, movieSelected.data.results, 3600)
+     return(value)
    }
+  }
+
+   
 }
+
+
 
 module.exports = getMovie
 
